@@ -1,0 +1,22 @@
+{
+  "loc.friendlyName": "Power Platform Environment Runtime State",
+  "loc.helpMarkDown": "",
+  "loc.description": "Sets Power Platform Environment Runtime State",
+  "loc.instanceNameFormat": "Set Power Apps Environment Runtime State: $(publisherId).$(extensionId)",
+  "loc.group.displayName.extension": "Extension",
+  "loc.input.label.authenticationType": "Authentication type",
+  "loc.input.help.authenticationType": "Authentication via username/password is simpler to set up but won't work if your AAD tenant requires MFA; use Service Principal Name (SPN) if MFA is required.",
+  "loc.input.label.PowerPlatformEnvironment": "Service connection",
+  "loc.input.help.PowerPlatformEnvironment": "Authenticate with your Power Platform environment with username/password. Does not support MFA.",
+  "loc.input.label.PowerPlatformSPN": "Service connection",
+  "loc.input.help.PowerPlatformSPN": "Authenticate with your Power Platform environment with an Azure AppID, tenantID and client secret.",
+  "loc.input.label.Environment": "Environment",
+  "loc.input.help.Environment": "Environment URL this task targets; default is the pipeline variable that e.g. the CreateEnvironment task has set before.",
+  "loc.input.label.runtimeState": "RuntimeState",
+  "loc.input.help.runtimeState": "Desired state for the Power Platform Environment",
+  "loc.messages.PowerAppsAdmin_ModuleNotFound": "The Power Apps Admin module cannot be found",
+  "loc.messages.PowerAppsAdmin_ServicePrincipalError": "Unable to connect using the provided client credentials",
+  "loc.messages.PowerAppsAdmin_UsernamePasswordError": "Unable to connect using the provided user name and password",
+  "loc.messages.PowerAppsAdmin_UnsupportedAuthenticationType": "The '{0}' authentication type is not supported",
+  "loc.messages.PowerAppsAdmin_EnvironmentNotFound": "Environment not found"
+}

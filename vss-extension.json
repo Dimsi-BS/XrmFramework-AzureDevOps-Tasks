@@ -1,0 +1,114 @@
+{
+  "manifestVersion": 1,
+  "id": "XrmFramework-DevOpsTasks",
+  "publisher": "Dimsi",
+  "version": "1.0.56",
+  "name": "XrmFramework DevOps tasks",
+  "description": "XrmFramework DevOps tasks",
+  "tags": [
+    "Extension",
+    "Marketplace",
+    "Publish",
+    "Package",
+    "Install",
+    "Continuous Integration",
+    "Continuous Delivery",
+    "Build",
+    "Release",
+    "Azure Pipelines",
+    "Azure DevOps Extensions",
+    "Visual Studio Extensions"
+  ],
+  "icons": {
+    "default": "tools-icon.png"
+  },
+  "public": false,
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "scopes": [],
+  "categories": [
+    "Azure Pipelines"
+  ],
+  "content": {
+    "details": {
+        "path": "overview.md"
+    },
+    "license": {
+      "path": "license.txt"
+    }
+  },
+  "links": {
+    "repository": {
+      "uri": "https://github.com/cgoconseils/XrmFramework"
+    },
+    "issues": {
+      "uri": "https://github.com/cgoconseils/XrmFramework/issues"
+    },
+    "support": {
+      "uri": "mailto:contact@cgoconseils.fr"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/cgoconseils/XrmFramework"
+  },
+  "files": [
+    {
+      "path": "Tasks/SetEnvironmentRuntimeState"
+    },
+    {
+      "path": "Tasks/ConnectionStringsCreation"
+    },
+    {
+      "path": "Tasks/DeployPlugins"
+    },
+    {
+      "path": "Tasks/DeployWebresources"
+    }
+  ],
+  "contributions": [
+    {
+      "id": "SetEnvironmentRuntimeState",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/SetEnvironmentRuntimeState"
+      }
+    },
+    {
+      "id": "ConnectionStringsCreation",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/ConnectionStringsCreation"
+      }
+    },
+    {
+      "id": "DeployPlugins",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/DeployPlugins"
+      }
+    },
+    {
+      "id": "DeployWebresources",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/DeployWebresources"
+      }
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": "524e7781-1960-498a-a96f-043eee7c3970",
+  "name": "XrmFrameworkEnvironmentRuntimeState",
+  "friendlyName": "Power Platform Environment Runtime State",
+  "description": "Sets Power Platform Environment Runtime State",
+  "author": "Dimsi",
+  "helpMarkDown": "",
+  "category": "Utility",
+  "version": {
+    "Major": 2,
+    "Minor": 0,
+    "Patch": 20
+  },
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "demands": [
+    "npm"
+  ],
+  "minimumAgentVersion": "1.83.0",
+  "groups": [
+    {
+      "name": "extension",
+      "displayName": "Extension",
+      "isExpanded": true
+    }
+  ],
+  "instanceNameFormat": "Set Power Apps Environment Runtime State: $(publisherId).$(extensionId)",
+  "inputs": [
+    {
+      "name": "authenticationType",
+      "type": "radio",
+      "label": "Authentication type",
+      "defaultValue": "PowerPlatformEnvironment",
+      "required": true,
+      "helpMarkDown": "Authentication via username/password is simpler to set up but won't work if your AAD tenant requires MFA; use Service Principal Name (SPN) if MFA is required.",
+      "options": {
+        "PowerPlatformEnvironment": "Username/password (no MFA support)",
+        "PowerPlatformSPN": "Service Principal/client secret (supports MFA)"
+      }
+    },
+    {
+      "name": "PowerPlatformEnvironment",
+      "type": "connectedService:Generic",
+      "label": "Service connection",
+      "required": true,
+      "visibleRule": "authenticationType = PowerPlatformEnvironment",
+      "helpMarkDown": "Authenticate with your Power Platform environment with username/password. Does not support MFA."
+    },
+    {
+      "name": "PowerPlatformSPN",
+      "type": "connectedService:powerplatform-spn",
+      "label": "Service connection",
+      "required": true,
+      "visibleRule": "authenticationType = PowerPlatformSPN",
+      "helpMarkDown": "Authenticate with your Power Platform environment with an Azure AppID, tenantID and client secret."
+    },
+    {
+      "name": "Environment",
+      "label": "Environment",
+      "type": "string",
+      "defaultValue": "$(BuildTools.EnvironmentUrl)",
+      "required": false,
+      "helpMarkDown": "Environment URL this task targets; default is the pipeline variable that e.g. the CreateEnvironment task has set before."
+    },
+    {
+      "name": "runtimeState",
+      "label": "RuntimeState",
+      "type": "radio",
+      "required": true,
+      "defaultValue": "Enabled",
+      "helpMarkDown": "Desired state for the Power Platform Environment",
+      "options": {
+        "Enabled": "Active", 
+        "AdminMode": "AdminOnly"
+      }
+    }
+  ],
+  "outputVariables": [
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "SetEnvironmentRuntimeState.ps1"
+    }
+  },
+  "messages": {
+    "PowerAppsAdmin_ModuleNotFound": "The Power Apps Admin module cannot be found",
+    "PowerAppsAdmin_ServicePrincipalError": "Unable to connect using the provided client credentials",
+    "PowerAppsAdmin_UsernamePasswordError": "Unable to connect using the provided user name and password",
+    "PowerAppsAdmin_UnsupportedAuthenticationType": "The '{0}' authentication type is not supported",
+    "PowerAppsAdmin_EnvironmentNotFound": "Environment not found"
+  }
+}
