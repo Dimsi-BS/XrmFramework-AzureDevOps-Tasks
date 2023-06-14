@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "XrmFramework-DevOpsTasks",
   "publisher": "Dimsi",
-  "version": "1.0.56",
+  "version": "1.0.59",
   "name": "XrmFramework DevOps tasks",
   "description": "XrmFramework DevOps tasks",
   "tags": [
@@ -22,7 +22,7 @@
   "icons": {
     "default": "tools-icon.png"
   },
-  "public": false,
+  "public": true,
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
