@@ -102,15 +102,28 @@ async function deployWithDeployProject(credentials: XrmFrameworkCredentials): Pr
     }
 }
 
-/** `wif` unless the connection carries a secret, in which case the config file is the credential. */
+/**
+ * How the CLI should authenticate, from what the service connection turned out to carry.
+ *
+ * A secret is handed over directly rather than written into a `connectionStrings.config` first - and
+ * through the environment, never the command line.
+ */
 function authMode(credentials: XrmFrameworkCredentials): string {
     if (credentials.federated) return 'wif';
 
+    if (credentials.clientSecret) {
+        tl.warning(
+            `The ${credentials.scheme} service connection carries an application secret. It works, ` +
+            'but a secret has to be stored and rotated and can leak: converting the connection to ' +
+            'Workload Identity federation removes it entirely.');
+
+        return 'clientsecret';
+    }
+
     tl.warning(
-        `The ${credentials.scheme} service connection carries a secret rather than a federated ` +
-        'identity, so the deployment reads Config/connectionStrings.config. Run the XrmFramework ' +
-        'connectionStrings creation task before this one, or convert the connection to workload ' +
-        'identity federation.');
+        `The ${credentials.scheme} service connection carries neither a federated identity nor an ` +
+        'application secret, so the deployment falls back to Config/connectionStrings.config. Run ' +
+        'the XrmFramework connectionStrings creation task before this one.');
 
     return 'connectionstring';
 }

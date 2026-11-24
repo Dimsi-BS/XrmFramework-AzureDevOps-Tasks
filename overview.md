@@ -46,9 +46,9 @@ with a security role.
 Installs `XrmFramework.Cli` as a .NET tool in a folder of its own and prepends it to PATH, so the
 deployment tasks — and any script in the job — can call `xrmframework`. Run it once per job.
 
-A version can be pinned; left empty it takes the latest, including prereleases, which is what the
-CLI currently ships as. It installs with `dotnet tool update`, so a job that runs twice does not
-fail on an already-installed tool.
+A version can be pinned; left empty it takes the latest **stable** release. A prerelease is
+installed only by naming its version, so a pipeline never moves onto a beta on its own. It installs
+with `dotnet tool update`, so a job that runs twice does not fail on an already-installed tool.
 
 ### XrmFramework plugin deployment
 
@@ -68,11 +68,20 @@ the project's build output, and the project name defaults to the project folder'
 
 The same two routes for `xrmframework deploy webresources`. Build the TypeScript before it runs.
 
+## Service connections that carry a secret
+
+A connection that is not federated still works: the task reads its application id and secret and
+hands them to the CLI through the environment — never a command line, which is visible to every
+process on the agent — so no `connectionStrings.config` is written at all. The task warns that a
+secret has to be stored and rotated and can leak, and that converting the connection to federation
+removes it entirely.
+
+Only the executable route still needs `Config/connectionStrings.config`.
+
 ### XrmFramework connectionStrings creation
 
 Writes `Config/connectionStrings.config` from a secret-based service connection. Needed only for the
-executable route, or for a connection that is not federated — a federated deployment needs no such
-file at all.
+executable route — both CLI routes supply their own credentials.
 
 ### Power Apps environment runtime state
 

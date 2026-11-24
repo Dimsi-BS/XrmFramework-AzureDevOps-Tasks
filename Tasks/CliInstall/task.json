@@ -9,7 +9,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "visibility": [
     "Build",
@@ -23,16 +23,7 @@
       "label": "Version",
       "type": "string",
       "required": false,
-      "helpMarkDown": "NuGet version of XrmFramework.Cli to install, for example `3.2.27-beta`. Leave empty for the latest."
-    },
-    {
-      "name": "AllowPrerelease",
-      "label": "Allow prerelease versions",
-      "type": "boolean",
-      "defaultValue": "true",
-      "required": false,
-      "helpMarkDown": "Only read when no version is given. The CLI currently ships as a prerelease, so leaving this on is what finds the newest build; turn it off to pin the job to stable releases once they exist.",
-      "visibleRule": "Version = "
+      "helpMarkDown": "NuGet version of XrmFramework.Cli to install, for example `3.2.27-beta`. Leave empty for the latest stable release - a prerelease is installed only by naming its version here."
     },
     {
       "name": "Source",

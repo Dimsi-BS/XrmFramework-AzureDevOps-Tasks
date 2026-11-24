@@ -23,6 +23,8 @@ export interface XrmFrameworkCredentials {
     clientId?: string;
     /** The OIDC token, already obtained. Only set when `federated`. */
     idToken?: string;
+    /** The application's secret, when the connection carries one instead of federating. */
+    clientSecret?: string;
 }
 
 /**
@@ -42,10 +44,16 @@ export async function resolveCredentials(authenticationType: string): Promise<Xr
     tl.debug(`Service connection ${endpointId} uses the ${scheme} scheme`);
 
     if (scheme !== 'WorkloadIdentityFederation') {
-        // A secret-based connection: the CLI takes no connection string on its command line, so the
-        // credentials have to reach it through Config/connectionStrings.config - which is what the
-        // XrmFrameworkConnectionStringsCreation task writes. Nothing to inject here.
-        return { scheme, federated: false, environmentUrl };
+        // A secret-based connection: the credentials are handed to the CLI directly, so this route
+        // needs no Config/connectionStrings.config of its own.
+        return {
+            scheme,
+            federated: false,
+            environmentUrl,
+            tenantId: parameter(endpointId, 'tenantId'),
+            clientId: parameter(endpointId, 'applicationId') || parameter(endpointId, 'serviceprincipalid'),
+            clientSecret: parameter(endpointId, 'clientSecret'),
+        };
     }
 
     // Spelled as Azure DevOps spells them for a federated connection - lower-case, unlike the
@@ -211,11 +219,12 @@ function errorMessage(body: string): string | undefined {
 export function credentialEnvironment(credentials: XrmFrameworkCredentials): { [key: string]: string } {
     const environment: { [key: string]: string } = {};
 
-    if (!credentials.federated) return environment;
-
-    if (credentials.idToken) environment['XRMFRAMEWORK_OIDC_TOKEN'] = credentials.idToken;
     if (credentials.tenantId) environment['XRMFRAMEWORK_TENANT_ID'] = credentials.tenantId;
     if (credentials.clientId) environment['XRMFRAMEWORK_CLIENT_ID'] = credentials.clientId;
+    if (credentials.idToken) environment['XRMFRAMEWORK_OIDC_TOKEN'] = credentials.idToken;
+
+    // Never on the command line: that is visible to every process on the agent.
+    if (credentials.clientSecret) environment['XRMFRAMEWORK_CLIENT_SECRET'] = credentials.clientSecret;
 
     return environment;
 }

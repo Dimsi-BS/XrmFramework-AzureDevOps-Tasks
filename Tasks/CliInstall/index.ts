@@ -14,7 +14,6 @@ async function run(): Promise<void> {
     try {
         const version = optional('Version');
         const source = optional('Source');
-        const allowPrerelease = tl.getBoolInput('AllowPrerelease', false);
         const toolPath = tl.getPathInput('ToolPath', true, false);
 
         const dotnet = tl.which('dotnet', true);
@@ -27,13 +26,9 @@ async function run(): Promise<void> {
             .arg(['tool', 'update', 'XrmFramework.Cli'])
             .arg(['--tool-path', toolPath]);
 
-        if (version) {
-            runner.arg(['--version', version]);
-        } else if (allowPrerelease) {
-            // The CLI currently ships as a prerelease, so without this a version-less install finds
-            // nothing at all rather than the newest build.
-            runner.arg('--prerelease');
-        }
+        // No --prerelease: a version-less install takes the latest stable, and a prerelease is
+        // asked for by naming it. A pipeline should not move onto a beta because nobody set a flag.
+        if (version) runner.arg(['--version', version]);
 
         if (source) runner.arg(['--add-source', source]);
 
