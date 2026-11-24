@@ -27,14 +27,6 @@ stages:
         npm run initdev
       displayName: 'Install Node dependencies'
 
-    - powershell: |
-        $vswhereLatest = "https://github.com/Microsoft/vswhere/releases/latest/download/vswhere.exe"
-        $vswherePath = "$(Build.SourcesDirectory)\BuildTasks\PublishVSExtension\tools\vswhere.exe"
-        remove-item $vswherePath
-        invoke-webrequest $vswhereLatest -OutFile $vswherePath
-        test-path $vswherePath -PathType Leaf
-      displayName: 'Grab the latest version of vswhere.exe'
-
     - task: Npm@1
       displayName: 'Build the extension'
       inputs:

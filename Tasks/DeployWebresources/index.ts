@@ -2,7 +2,7 @@
 
 import tl = require('azure-pipelines-task-lib/task');
 import path = require('path');
-import { XrmFrameworkCredentials, credentialEnvironment, inheritedEnvironment, resolveCredentials } from './xrmframework-credentials';
+import { XrmFrameworkCredentials, credentialEnvironment, inheritedEnvironment, resolveCredentials } from '../Shared/xrmframework-credentials';
 
 /**
  * Publishes web resources to the environment of a service connection.

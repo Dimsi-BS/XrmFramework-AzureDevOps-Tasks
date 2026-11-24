@@ -1,8 +1,8 @@
 // Copyright (c) Dimsi. Licensed under the MIT License.
 
-// Duplicated verbatim in every task that needs it: each task folder is compiled on its own
-// tsconfig with rootDir ".", so a file shared from Tasks/Common would land outside the task and
-// never ship. The same reason the PowerShell helpers are copied per task in this repository.
+// The one copy, shared by every task that needs it. A task imports it from "../Shared" and
+// scripts/build-tasks.js bundles it into that task's index.js, so nothing outside the task
+// folder has to ship.
 
 import tl = require('azure-pipelines-task-lib/task');
 import http = require('http');
@@ -25,6 +25,9 @@ export interface XrmFrameworkCredentials {
     idToken?: string;
     /** The application's secret, when the connection carries one instead of federating. */
     clientSecret?: string;
+    /** User name, for a connection that authenticates as a user rather than an application. */
+    username?: string;
+    password?: string;
 }
 
 /**
@@ -53,6 +56,8 @@ export async function resolveCredentials(authenticationType: string): Promise<Xr
             tenantId: parameter(endpointId, 'tenantId'),
             clientId: parameter(endpointId, 'applicationId') || parameter(endpointId, 'serviceprincipalid'),
             clientSecret: parameter(endpointId, 'clientSecret'),
+            username: parameter(endpointId, 'username'),
+            password: parameter(endpointId, 'password'),
         };
     }
 
@@ -75,8 +80,7 @@ export async function resolveCredentials(authenticationType: string): Promise<Xr
  * instead of a 401.
  */
 async function requestOidcToken(serviceConnectionId: string): Promise<string> {
-    const requestUrl = buildIdTokenRequestUrl(serviceConnectionId);
-    const accessToken = jobAccessToken();
+    const { url: requestUrl, token: accessToken } = azureDevOpsOidcRequest(serviceConnectionId);
 
     tl.debug(`Requesting an OIDC token from ${requestUrl}`);
 
@@ -98,6 +102,23 @@ async function requestOidcToken(serviceConnectionId: string): Promise<string> {
     tl.setSecret(token);
 
     return token;
+}
+
+/** Where to ask Azure DevOps for an OIDC token, and what to ask with. */
+export interface OidcRequest {
+    url: string;
+    token: string;
+}
+
+/**
+ * The OIDC request for this job, for a task that delegates the exchange to another tool.
+ *
+ * `pac auth create --azureDevOpsFederated` reads these two from
+ * `PAC_ADO_ID_TOKEN_REQUEST_URL` and `PAC_ADO_ID_TOKEN_REQUEST_TOKEN`, so handing them over lets
+ * pac federate from inside a task that holds the service connection.
+ */
+export function azureDevOpsOidcRequest(serviceConnectionId: string): OidcRequest {
+    return { url: buildIdTokenRequestUrl(serviceConnectionId), token: jobAccessToken() };
 }
 
 interface HttpAnswer {

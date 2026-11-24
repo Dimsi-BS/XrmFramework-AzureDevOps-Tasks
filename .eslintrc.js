@@ -1,4 +1,5 @@
 module.exports = {
+    "root": true,
     "env": {
         "browser": true,
         "commonjs": true,
@@ -10,7 +11,11 @@ module.exports = {
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": 11
+        "ecmaVersion": 11,
+        // The type-aware rules below need a program. Each task has its own tsconfig, and a file
+        // in Tasks/Shared is checked through the tasks that import it.
+        "project": ["./Tasks/*/tsconfig.json"],
+        "tsconfigRootDir": __dirname
     },
     "plugins": [
         "@typescript-eslint"
