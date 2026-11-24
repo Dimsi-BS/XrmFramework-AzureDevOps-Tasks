@@ -4,21 +4,19 @@
   "friendlyName": "XrmFramework plugin deployment",
   "description": "Deploy the xrmFramework plugin",
   "author": "Dimsi",
-  "helpMarkDown": "",
+  "helpMarkDown": "Deploys through the **XrmFramework CLI** when the job installed it - add the *XrmFramework CLI installer* task before this one - and falls back to the scaffolded **deploy project executable** otherwise.\n\nOnly the CLI route can authenticate through *Workload Identity federation*: the task obtains an OIDC token for the service connection, which only a task consuming it can do, and the deployment exchanges it for a Dataverse token. The executable route reads `Config/connectionStrings.config`, as before.",
   "category": "Utility",
   "version": {
     "Major": 1,
-    "Minor": 0,
-    "Patch": 9
+    "Minor": 1,
+    "Patch": 0
   },
   "visibility": [
     "Build",
     "Release"
   ],
-  "demands": [
-    "npm"
-  ],
-  "minimumAgentVersion": "1.83.0",
+  "demands": [],
+  "minimumAgentVersion": "2.144.0",
   "groups": [
     {
       "name": "extension",
@@ -26,7 +24,7 @@
       "isExpanded": true
     }
   ],
-  "instanceNameFormat": "Deploy a XrmFramework Plugin: $(publisherId).$(extensionId)",
+  "instanceNameFormat": "Deploy XrmFramework plugins: $(Project)",
   "inputs": [
     {
       "name": "authenticationType",
@@ -69,14 +67,14 @@
       "label": "Configuration",
       "type": "string",
       "required": false,
-      "defaultValue" : "$(buildConfiguration)",
+      "defaultValue": "$(buildConfiguration)",
       "helpMarkDown": "The build configuration"
     },
     {
       "name": "PluginProjectPath",
       "label": "PluginProjectPath",
       "type": "string",
-      "required": true,
+      "required": false,
       "helpMarkDown": "Path to the plugin project to deploy"
     },
     {
@@ -85,13 +83,48 @@
       "type": "string",
       "required": false,
       "helpMarkDown": "Path to the deploy folder executable"
+    },
+    {
+      "name": "DllPath",
+      "label": "Plugin assembly",
+      "type": "filePath",
+      "required": false,
+      "helpMarkDown": "CLI route. The built net48 or net462 assembly. Leave empty to find it under the plugin project's `bin/<Configuration>`."
+    },
+    {
+      "name": "PackagePath",
+      "label": "Plugin package",
+      "type": "filePath",
+      "required": false,
+      "helpMarkDown": "CLI route. Explicit `.nupkg` to push, overriding the one found next to the assembly. Only read for a project configured with `deployment=\"package\"`."
+    },
+    {
+      "name": "Project",
+      "label": "Project",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "CLI route. Project name as declared under `<projects>` in `xrmFramework.config`. Defaults to the last folder of the project path above."
+    },
+    {
+      "name": "ProjectRoot",
+      "label": "Project root",
+      "type": "string",
+      "defaultValue": "$(Build.SourcesDirectory)",
+      "required": true,
+      "helpMarkDown": "CLI route. Folder containing `Config/xrmFramework.config`."
+    },
+    {
+      "name": "ExtraArguments",
+      "label": "Extra arguments",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "CLI route. Appended to the command line verbatim, for an option this task does not surface."
     }
   ],
-  "outputVariables": [
-  ],
+  "outputVariables": [],
   "execution": {
-    "PowerShell3": {
-      "target": "DeployPlugins.ps1"
+    "Node20_1": {
+      "target": "index.js"
     }
   }
 }

@@ -1,0 +1,10 @@
+{
+  "name": "xrmframework-cli-install",
+  "dependencies": {
+    "@types/node": "^10.17.0",
+    "azure-pipelines-task-lib": "4.9.0"
+  },
+  "devDependencies": {
+    "typescript": "4.0.2"
+  }
+}

@@ -1,6 +1,9 @@
 {
     "tasks": [
-        "SetEnvironmentRuntimeState"
+        "SetEnvironmentRuntimeState",
+        "CliInstall",
+        "DeployPlugins",
+        "DeployWebresources"
     ],
     "taskResources": [
         "*.ps1",

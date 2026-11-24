@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "XrmFramework-DevOpsTasks",
   "publisher": "Dimsi",
-  "version": "1.0.59",
+  "version": "1.1.0",
   "name": "XrmFramework DevOps tasks",
   "description": "XrmFramework DevOps tasks",
   "tags": [
@@ -34,7 +34,7 @@
   ],
   "content": {
     "details": {
-        "path": "overview.md"
+      "path": "overview.md"
     },
     "license": {
       "path": "license.txt"
@@ -67,6 +67,9 @@
     },
     {
       "path": "Tasks/DeployWebresources"
+    },
+    {
+      "path": "Tasks/CliInstall"
     }
   ],
   "contributions": [
@@ -108,6 +111,16 @@
       ],
       "properties": {
         "name": "Tasks/DeployWebresources"
+      }
+    },
+    {
+      "id": "CliInstall",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/CliInstall"
       }
     }
   ]

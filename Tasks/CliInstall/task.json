@@ -1,0 +1,68 @@
+{
+  "id": "0f1a6d84-7c21-4a9e-9b3d-1f6c08f4a2b1",
+  "name": "XrmFrameworkCliInstall",
+  "friendlyName": "XrmFramework CLI installer",
+  "description": "Install the XrmFramework CLI (dotnet tool) and put it on PATH for the rest of the job",
+  "author": "Dimsi",
+  "helpMarkDown": "Installs `XrmFramework.Cli` as a .NET tool in a folder of its own and prepends that folder to PATH, so later steps can call `xrmframework` directly. Run this once per job, before the XrmFramework deployment tasks.",
+  "category": "Utility",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "minimumAgentVersion": "2.144.0",
+  "instanceNameFormat": "Install XrmFramework CLI $(Version)",
+  "inputs": [
+    {
+      "name": "Version",
+      "label": "Version",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "NuGet version of XrmFramework.Cli to install, for example `3.2.27-beta`. Leave empty for the latest."
+    },
+    {
+      "name": "AllowPrerelease",
+      "label": "Allow prerelease versions",
+      "type": "boolean",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "Only read when no version is given. The CLI currently ships as a prerelease, so leaving this on is what finds the newest build; turn it off to pin the job to stable releases once they exist.",
+      "visibleRule": "Version = "
+    },
+    {
+      "name": "Source",
+      "label": "NuGet source",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "Extra NuGet feed to install from, for a CLI published to a private feed. Leave empty for the sources the agent already knows."
+    },
+    {
+      "name": "ToolPath",
+      "label": "Tool path",
+      "type": "string",
+      "defaultValue": "$(Agent.ToolsDirectory)/xrmframework-cli",
+      "required": true,
+      "helpMarkDown": "Folder the tool is installed in, prepended to PATH. A folder of its own rather than the agent's global tools folder, which is not reliably on PATH."
+    }
+  ],
+  "outputVariables": [
+    {
+      "name": "XrmFrameworkCliPath",
+      "description": "Full path to the installed xrmframework executable."
+    },
+    {
+      "name": "XrmFrameworkCliVersion",
+      "description": "Version actually installed, read back from the tool listing."
+    }
+  ],
+  "execution": {
+    "Node20_1": {
+      "target": "index.js"
+    }
+  }
+}
