@@ -39,6 +39,14 @@ credential on the Entra app registration (*Certificates & secrets* → *Federate
 *Other issuer*), and add that application as an **application user** in the Dataverse environment
 with a security role.
 
+## Which environment is deployed to
+
+Every task takes the environment URL from its service connection, so nothing has to be set for the
+common case. The `Environment` input overrides it, and defaults to `$(BuildTools.EnvironmentUrl)` —
+the variable the Power Platform *Create Environment* task publishes — so a pipeline that provisions
+an environment first deploys into that one. When that variable is not set the connection's own URL
+applies.
+
 ## Tasks
 
 ### XrmFramework CLI installer

@@ -3,6 +3,7 @@
 import tl = require('azure-pipelines-task-lib/task');
 import path = require('path');
 import { XrmFrameworkCredentials, credentialEnvironment, inheritedEnvironment, resolveCredentials } from '../Shared/xrmframework-credentials';
+import { input } from '../Shared/task-inputs';
 
 /**
  * Publishes web resources to the environment of a service connection.
@@ -36,14 +37,14 @@ async function run(): Promise<void> {
 }
 
 async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials): Promise<void> {
-    const environmentUrl = tl.getInput('Environment', false) || credentials.environmentUrl;
+    const environmentUrl = input('Environment') || credentials.environmentUrl;
 
     if (!environmentUrl) {
         throw new Error('No environment URL: set it on the task, or on the service connection.');
     }
 
-    const project = tl.getInput('Project', false) || deriveProjectName();
-    const webresourcesPath = tl.getPathInput('WebresourcesProjectPath', false, false);
+    const project = input('Project') || deriveProjectName();
+    const webresourcesPath = input('WebresourcesProjectPath');
 
     console.log(`Publishing the web resources of ${project} with the XrmFramework CLI`);
 
@@ -57,7 +58,7 @@ async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials):
     if (webresourcesPath) runner.arg(['--path', webresourcesPath]);
 
     runner.arg(['--auth', authMode(credentials)]);
-    runner.line(tl.getInput('ExtraArguments', false) || '');
+    runner.line(input('ExtraArguments') || '');
 
     const exitCode = await runner.exec({
         env: inheritedEnvironment(credentialEnvironment(credentials)),
@@ -70,7 +71,7 @@ async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials):
 }
 
 async function deployWithDeployProject(credentials: XrmFrameworkCredentials): Promise<void> {
-    const deployProjectPath = tl.getPathInput('DeployProjectPath', false, false);
+    const deployProjectPath = input('DeployProjectPath');
 
     if (!deployProjectPath) {
         throw new Error(
@@ -91,7 +92,7 @@ async function deployWithDeployProject(credentials: XrmFrameworkCredentials): Pr
 
     const runner = tl.tool(executable).arg('-n');
 
-    const webresourcesPath = tl.getPathInput('WebresourcesProjectPath', false, false);
+    const webresourcesPath = input('WebresourcesProjectPath');
 
     if (webresourcesPath) runner.arg(['-p', webresourcesPath]);
 
@@ -140,7 +141,7 @@ function findCli(): string | undefined {
 }
 
 function deriveProjectName(): string {
-    const projectPath = tl.getPathInput('WebresourcesProjectPath', false, false);
+    const projectPath = input('WebresourcesProjectPath');
 
     if (!projectPath) {
         throw new Error('Set Project, the project name as declared under <projects> in xrmFramework.config.');
@@ -157,7 +158,7 @@ function deriveProjectName(): string {
  */
 function findDeployExecutable(deployProjectPath: string): string {
     const name = lastSegment(deployProjectPath);
-    const configuration = tl.getInput('Configuration', false) || 'Release';
+    const configuration = input('Configuration') || 'Release';
     const root = path.join(deployProjectPath, 'bin', configuration);
 
     const matches = tl.findMatch(root, ['**/*.exe'])

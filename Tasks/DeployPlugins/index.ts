@@ -3,6 +3,7 @@
 import tl = require('azure-pipelines-task-lib/task');
 import path = require('path');
 import { XrmFrameworkCredentials, credentialEnvironment, inheritedEnvironment, resolveCredentials } from '../Shared/xrmframework-credentials';
+import { input } from '../Shared/task-inputs';
 
 /**
  * Deploys plugins, Custom APIs and workflow activities to the environment of a service connection.
@@ -36,14 +37,14 @@ async function run(): Promise<void> {
 }
 
 async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials): Promise<void> {
-    const environmentUrl = tl.getInput('Environment', false) || credentials.environmentUrl;
+    const environmentUrl = input('Environment') || credentials.environmentUrl;
 
     if (!environmentUrl) {
         throw new Error('No environment URL: set it on the task, or on the service connection.');
     }
 
-    const dll = tl.getPathInput('DllPath', false, false) || discoverAssembly();
-    const project = tl.getInput('Project', false) || deriveProjectName();
+    const dll = input('DllPath') || discoverAssembly();
+    const project = input('Project') || deriveProjectName();
 
     console.log(`Deploying ${dll} with the XrmFramework CLI`);
 
@@ -55,12 +56,12 @@ async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials):
         .arg(['--environment', environmentUrl])
         .arg('--noprompt');
 
-    const packagePath = tl.getPathInput('PackagePath', false, false);
+    const packagePath = input('PackagePath');
 
     if (packagePath) runner.arg(['--package', packagePath]);
 
     runner.arg(['--auth', authMode(credentials)]);
-    runner.line(tl.getInput('ExtraArguments', false) || '');
+    runner.line(input('ExtraArguments') || '');
 
     const exitCode = await runner.exec({
         env: inheritedEnvironment(credentialEnvironment(credentials)),
@@ -73,7 +74,7 @@ async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials):
 }
 
 async function deployWithDeployProject(credentials: XrmFrameworkCredentials): Promise<void> {
-    const deployProjectPath = tl.getPathInput('DeployProjectPath', false, false);
+    const deployProjectPath = input('DeployProjectPath');
 
     if (!deployProjectPath) {
         throw new Error(
@@ -144,17 +145,20 @@ function findCli(): string | undefined {
  * to the CLI without new inputs.
  */
 function discoverAssembly(): string {
-    const projectPath = tl.getPathInput('PluginProjectPath', false, true);
+    const projectPath = input('PluginProjectPath');
 
     if (!projectPath) {
         throw new Error('Set DllPath, or PluginProjectPath so the assembly can be found under its build output.');
     }
 
-    const name = lastSegment(projectPath);
-    const configuration = tl.getInput('Configuration', false) || 'Release';
-    const root = path.join(projectPath, 'bin', configuration);
+    tl.checkPath(projectPath, 'PluginProjectPath');
 
-    const matches = tl.findMatch(root, [`**/${name}.dll`]);
+    const name = lastSegment(projectPath);
+    const root = path.join(projectPath, 'bin', configuration());
+
+    // The reference assembly the SDK writes next to the real one - bin/<configuration>/<tfm>/ref -
+    // carries no IL, so it is never the one to deploy.
+    const matches = tl.findMatch(root, [`**/${name}.dll`, `!**/ref/${name}.dll`]);
 
     if (matches.length === 0) {
         throw new Error(`No assembly named '${name}.dll' found under '${root}'. Set DllPath explicitly.`);
@@ -164,7 +168,7 @@ function discoverAssembly(): string {
 }
 
 function deriveProjectName(): string {
-    const projectPath = tl.getPathInput('PluginProjectPath', false, false);
+    const projectPath = input('PluginProjectPath');
 
     if (!projectPath) {
         throw new Error('Set Project, the project name as declared under <projects> in xrmFramework.config.');
@@ -181,8 +185,7 @@ function deriveProjectName(): string {
  */
 function findDeployExecutable(deployProjectPath: string): string {
     const name = lastSegment(deployProjectPath);
-    const configuration = tl.getInput('Configuration', false) || 'Release';
-    const root = path.join(deployProjectPath, 'bin', configuration);
+    const root = path.join(deployProjectPath, 'bin', configuration());
 
     const matches = tl.findMatch(root, ['**/*.exe'])
         .filter(match => path.basename(match, '.exe').toLowerCase() === name.toLowerCase());
@@ -192,6 +195,11 @@ function findDeployExecutable(deployProjectPath: string): string {
     }
 
     return matches[0];
+}
+
+/** The build configuration the assembly was built under. */
+function configuration(): string {
+    return input('Configuration') || 'Release';
 }
 
 /** Last non-empty segment of a path, whichever separator it uses. */

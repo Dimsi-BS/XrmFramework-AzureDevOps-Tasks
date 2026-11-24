@@ -2,6 +2,7 @@
 
 import tl = require('azure-pipelines-task-lib/task');
 import { XrmFrameworkCredentials, azureDevOpsOidcRequest, inheritedEnvironment, resolveCredentials } from '../Shared/xrmframework-credentials';
+import { input } from '../Shared/task-inputs';
 
 /**
  * Puts a Power Platform environment into, or out of, administration mode.
@@ -18,7 +19,7 @@ async function run(): Promise<void> {
         const authenticationType = tl.getInput('authenticationType', true);
         const credentials = await resolveCredentials(authenticationType);
 
-        const environmentUrl = tl.getInput('Environment', false) || credentials.environmentUrl;
+        const environmentUrl = input('Environment') || credentials.environmentUrl;
 
         if (!environmentUrl) {
             throw new Error('No environment URL: set it on the task, or on the service connection.');
