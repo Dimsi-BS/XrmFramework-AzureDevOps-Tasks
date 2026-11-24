@@ -34,5 +34,18 @@ The [Build](.github/workflows/build.yml) workflow does the same on every push an
 ## Releasing
 
 Bump the `version` of every task whose behaviour changed in its `task.json`, and the extension's in
-`vss-extension.json`; the Marketplace rejects a version it has already seen. Then publish the
-`.vsix` under the `Dimsi` publisher.
+`vss-extension.json`; the Marketplace rejects a version it has already seen. Merge to `main`, then
+push a tag named after the extension version:
+
+```bash
+git tag v1.2.3 && git push origin v1.2.3
+```
+
+The [Publish](.github/workflows/publish.yml) workflow builds the `.vsix`, waits for approval in the
+`marketplace` environment, and publishes it under the `Dimsi` publisher through the Marketplace's
+Trusted Publishing: no PAT is stored anywhere. It refuses a tag that does not match the version in
+`vss-extension.json`.
+
+Trusted Publishing works only because the `Dimsi` publisher has a policy naming this repository,
+the `publish.yml` workflow and the `marketplace` environment. Renaming any of them means updating
+that policy first.

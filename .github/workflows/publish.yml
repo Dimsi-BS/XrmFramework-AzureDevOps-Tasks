@@ -1,0 +1,56 @@
+name: Publish
+
+# Publishes the extension to the Visual Studio Marketplace through Trusted Publishing: the
+# Marketplace trusts this workflow, from this repository, in the `marketplace` environment, and
+# needs no secret. Renaming this file or the environment breaks that policy.
+#
+# Push a tag named after the version in vss-extension.json (v1.2.3 for 1.2.3), or run it by hand.
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  publish:
+    name: Publish to the Marketplace
+    needs: build
+    runs-on: ubuntu-latest
+    environment: marketplace
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check the tag matches the extension version
+      if: github.ref_type == 'tag'
+      run: |
+        version=$(node -p "require('./vss-extension.json').version")
+        if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+          echo "::error::Tag ${GITHUB_REF_NAME} does not match vss-extension.json version ${version} (expected v${version})."
+          exit 1
+        fi
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+
+    - name: Install tfx
+      run: npm ci
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: vsix
+        path: dist
+
+    - name: Publish
+      run: node scripts/publish-marketplace.js dist/*.vsix
