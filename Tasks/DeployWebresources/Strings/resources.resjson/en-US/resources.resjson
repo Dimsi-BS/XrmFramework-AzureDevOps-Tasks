@@ -18,5 +18,6 @@
   "loc.messages.PowerAppsAdmin_ServicePrincipalError": "Unable to connect using the provided client credentials",
   "loc.messages.PowerAppsAdmin_UsernamePasswordError": "Unable to connect using the provided user name and password",
   "loc.messages.PowerAppsAdmin_UnsupportedAuthenticationType": "The '{0}' authentication type is not supported",
-  "loc.messages.PowerAppsAdmin_EnvironmentNotFound": "Environment not found"
+  "loc.messages.PowerAppsAdmin_EnvironmentNotFound": "Environment not found",
+  "loc.messages.XrmFramework_DeploymentFailed": "The XrmFramework webresources deployment failed"
 }

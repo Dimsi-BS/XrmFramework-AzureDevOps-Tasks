@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "XrmFramework-DevOpsTasks",
   "publisher": "Dimsi",
-  "version": "1.0.59",
+  "version": "1.1.1",
   "name": "XrmFramework DevOps tasks",
   "description": "XrmFramework DevOps tasks",
   "tags": [
@@ -34,7 +34,7 @@
   ],
   "content": {
     "details": {
-        "path": "overview.md"
+      "path": "overview.md"
     },
     "license": {
       "path": "license.txt"
@@ -42,10 +42,10 @@
   },
   "links": {
     "repository": {
-      "uri": "https://github.com/cgoconseils/XrmFramework"
+      "uri": "https://github.com/Dimsi-BS/XrmFramework-AzureDevOps-Tasks"
     },
     "issues": {
-      "uri": "https://github.com/cgoconseils/XrmFramework/issues"
+      "uri": "https://github.com/Dimsi-BS/XrmFramework-AzureDevOps-Tasks/issues"
     },
     "support": {
       "uri": "mailto:contact@cgoconseils.fr"
@@ -53,7 +53,7 @@
   },
   "repository": {
     "type": "git",
-    "uri": "https://github.com/cgoconseils/XrmFramework"
+    "uri": "https://github.com/Dimsi-BS/XrmFramework-AzureDevOps-Tasks"
   },
   "files": [
     {
@@ -67,6 +67,9 @@
     },
     {
       "path": "Tasks/DeployWebresources"
+    },
+    {
+      "path": "Tasks/CliInstall"
     }
   ],
   "contributions": [
@@ -108,6 +111,16 @@
       ],
       "properties": {
         "name": "Tasks/DeployWebresources"
+      }
+    },
+    {
+      "id": "CliInstall",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/CliInstall"
       }
     }
   ]

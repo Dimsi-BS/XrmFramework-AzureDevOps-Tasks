@@ -4,21 +4,19 @@
   "friendlyName": "XrmFramework connectionStrings creation",
   "description": "Initialize the xrmFramework connectionStrings.config file",
   "author": "Dimsi",
-  "helpMarkDown": "",
+  "helpMarkDown": "Writes `Config/connectionStrings.config` from the credentials of a service connection, under the name `xrmFramework.config` selects.\n\nNeeded only where a deployment cannot be handed its credentials directly - the scaffolded deploy project executable. Both XrmFramework CLI routes, federation and application secret, supply their own, so a pipeline using them needs no such file.",
   "category": "Utility",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 20
+    "Patch": 21
   },
   "visibility": [
     "Build",
     "Release"
   ],
-  "demands": [
-    "npm"
-  ],
-  "minimumAgentVersion": "2.115.0",
+  "demands": [],
+  "minimumAgentVersion": "2.144.0",
   "groups": [
     {
       "name": "extension",
@@ -26,7 +24,7 @@
       "isExpanded": true
     }
   ],
-  "instanceNameFormat": "Set Power Apps Environment Runtime State: $(publisherId).$(extensionId)",
+  "instanceNameFormat": "Create the XrmFramework connectionStrings.config",
   "inputs": [
     {
       "name": "authenticationType",
@@ -81,11 +79,10 @@
       "helpMarkDown": "Path to the created connectionStrings.config file"
     }
   ],
-  "outputVariables": [
-  ],
+  "outputVariables": [],
   "execution": {
-    "PowerShell3": {
-      "target": "ConnectionStringsCreation.ps1"
+    "Node20_1": {
+      "target": "index.js"
     }
   }
 }

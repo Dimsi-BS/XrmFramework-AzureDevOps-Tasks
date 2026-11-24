@@ -1,12 +1,8 @@
 {
-  "name": "ConnectionStringsCreation",
+  "name": "connection-strings-creation",
   "dependencies": {
-    "@types/mocha": "^5.2.7",
     "@types/node": "^10.17.0",
-    "@types/q": "1.0.7",
-    "azure-pipelines-task-lib": "3.1.10",
-    "moment": "^2.29.4",
-    "uuid": "^8.3.0"
+    "azure-pipelines-task-lib": "4.9.0"
   },
   "devDependencies": {
     "typescript": "4.0.2"

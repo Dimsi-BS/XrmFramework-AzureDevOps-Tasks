@@ -1,0 +1,21 @@
+{
+    // Type-checking only: scripts/build-tasks.js bundles index.ts and what it imports from
+    // ../Shared into index.js.
+    "compilerOptions": {
+        "target": "ES2018",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "noImplicitAny": false,
+        "noEmit": true,
+        // ../Shared has no node_modules of its own: its imports resolve to this task's.
+        "baseUrl": ".",
+        "paths": {
+            "azure-pipelines-task-lib/*": ["node_modules/azure-pipelines-task-lib/*"]
+        },
+        "typeRoots": ["node_modules/@types"]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
