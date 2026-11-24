@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and package
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install build tooling
+      run: npm ci
+
+    # Each task ships its own node_modules in the .vsix, so only its runtime dependencies are
+    # installed there: type-checking and bundling use the tooling installed at the root.
+    - name: Install task dependencies
+      run: |
+        for manifest in Tasks/*/package.json; do
+          (cd "$(dirname "$manifest")" && npm ci --omit=dev --no-audit --no-fund)
+        done
+
+    - name: Build and lint
+      run: npm run build
+
+    - name: Package the extension
+      run: npm run package:tasks
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: vsix
+        path: dist/*.vsix
+        if-no-files-found: error

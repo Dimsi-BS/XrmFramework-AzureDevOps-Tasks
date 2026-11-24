@@ -3,7 +3,7 @@
   "description": "XrmFramework Azure DevOps Tasks",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cgoconseils/XrmFramework.git"
+    "url": "https://github.com/Dimsi-BS/XrmFramework-AzureDevOps-Tasks.git"
   },
   "keywords": [
     "power-platform",

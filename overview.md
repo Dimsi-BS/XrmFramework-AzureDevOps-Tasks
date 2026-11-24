@@ -1,6 +1,6 @@
 # XrmFramework DevOps tasks
 
-Pipeline tasks for deploying an [XrmFramework](https://github.com/cgoconseils/XrmFramework) solution
+Pipeline tasks for deploying an [XrmFramework](https://github.com/Dimsi-BS/XrmFramework) solution
 to Dataverse.
 
 ## Deploying without a secret
