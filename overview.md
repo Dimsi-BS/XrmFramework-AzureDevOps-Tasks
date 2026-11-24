@@ -69,8 +69,10 @@ Deploys plugins, Custom APIs and workflow activities. Two routes, in this order:
    cannot federate; the task says so when the connection would have allowed it.
 
 Only `PluginProjectPath` and `Configuration` are needed for either route: the assembly is found under
-the project's build output, and the project name defaults to the project folder's. `DllPath`,
-`Project` and `PackagePath` override that when the layout is unusual.
+the project's build output, and the project name defaults to the project folder's. `Project` alone
+does just as well on the CLI route, since a project usually lives in a folder named after it under
+the project root - `Plugins` stands for `$(Build.SourcesDirectory)/Plugins`. `DllPath` and
+`PackagePath` override all of that when the layout is unusual.
 
 ### XrmFramework webresource deployment
 

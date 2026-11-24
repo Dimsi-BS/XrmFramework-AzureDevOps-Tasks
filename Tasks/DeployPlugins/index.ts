@@ -52,7 +52,7 @@ async function deployWithCli(cli: string, credentials: XrmFrameworkCredentials):
         .arg(['deploy', 'plugins'])
         .arg(['--dll', dll])
         .arg(['--project', project])
-        .arg(['--project-root', tl.getPathInput('ProjectRoot', true, true)])
+        .arg(['--project-root', projectRoot()])
         .arg(['--environment', environmentUrl])
         .arg('--noprompt');
 
@@ -145,13 +145,19 @@ function findCli(): string | undefined {
  * to the CLI without new inputs.
  */
 function discoverAssembly(): string {
-    const projectPath = input('PluginProjectPath');
+    const projectPath = pluginProjectPath();
 
     if (!projectPath) {
-        throw new Error('Set DllPath, or PluginProjectPath so the assembly can be found under its build output.');
+        throw new Error(
+            'Set DllPath, or PluginProjectPath - or Project, for a project in a folder of that ' +
+            'name under the project root - so the assembly can be found under its build output.');
     }
 
-    tl.checkPath(projectPath, 'PluginProjectPath');
+    if (!tl.exist(projectPath)) {
+        throw new Error(
+            `No plugin project folder at '${projectPath}'. Set PluginProjectPath, or DllPath for ` +
+            'an assembly built somewhere else entirely.');
+    }
 
     const name = lastSegment(projectPath);
     const root = path.join(projectPath, 'bin', configuration());
@@ -175,6 +181,29 @@ function deriveProjectName(): string {
     }
 
     return lastSegment(projectPath);
+}
+
+/**
+ * The plugin project's folder, which the assembly is found under.
+ *
+ * A project almost always lives in a folder named after it, next to the `Config` folder, so the
+ * project name alone is enough: `Project` on its own stands for `<project root>/<Project>`, the
+ * mirror image of a `PluginProjectPath` on its own standing for the project name. Setting both
+ * covers the layout where the two differ.
+ */
+function pluginProjectPath(): string | undefined {
+    const explicit = input('PluginProjectPath');
+
+    if (explicit) return explicit;
+
+    const project = input('Project');
+
+    return project ? path.join(projectRoot(), project) : undefined;
+}
+
+/** The folder holding `Config/xrmFramework.config`, which every path here is relative to. */
+function projectRoot(): string {
+    return tl.getPathInput('ProjectRoot', true, true);
 }
 
 /**
